@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 @RequestMapping(value = "/v1/qrc")
 @Slf4j
 public class QrcRestController {
-
+    @CrossOrigin(origins = "*")
     @PostMapping("/write")
     @ApiOperation(value = "Renders a QR Code")
     public ResponseEntity<BufferedImage> write(
