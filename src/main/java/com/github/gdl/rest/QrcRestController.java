@@ -10,14 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Max;
 import java.awt.image.BufferedImage;
 
 @RestController
 @RequestMapping(value = "/v1/qrc")
 @Slf4j
+@CrossOrigin(origins = "*")
 public class QrcRestController {
-    @CrossOrigin(origins = "*")
+
     @PostMapping("/write")
     @ApiOperation(value = "Renders a QR Code")
     public ResponseEntity<BufferedImage> write(
@@ -25,17 +25,20 @@ public class QrcRestController {
         Qrc qrc = new QrcBuilder(qr).build();
         int width = qr.getMatrix().getWidth();
         int height = qr.getMatrix().getHeight();
-        return new ResponseEntity<>(qrc.writeToImage(width, height), HttpStatus.OK);
+        BufferedImage image = qrc.writeToImage(width, height);
+        log.info("image: [{}]", image.toString());
+        return new ResponseEntity<>(image, HttpStatus.OK);
     }
 
     @GetMapping("/write/{content}")
     @ApiOperation(value = "Renders a QR Code with Content")
     public ResponseEntity<BufferedImage> write(
-            @PathVariable @Max(362) String content,
+            @PathVariable String content,
             @RequestParam(value = "width", defaultValue = "400") int width,
             @RequestParam(value = "height", defaultValue = "400") int height) throws WriterException {
         Qrc qrc = new Qrc(content);
-        return new ResponseEntity<>(qrc.writeToImage(width, height), HttpStatus.OK);
+        BufferedImage image = qrc.writeToImage(width, height);
+        return new ResponseEntity<>(image, HttpStatus.OK);
     }
 
 }
