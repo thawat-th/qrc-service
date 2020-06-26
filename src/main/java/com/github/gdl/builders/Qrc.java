@@ -9,6 +9,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.Assert;
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
@@ -20,8 +21,9 @@ public class Qrc {
     private String content;
 
     public BufferedImage writeToImage(int width, int height) throws WriterException {
+        Assert.notNull(this.content, "QRC content must not be null");
         QRCodeWriter barcodeWriter = new QRCodeWriter();
-        Hashtable hints = new Hashtable();
+        Hashtable<EncodeHintType, String> hints = new Hashtable<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BitMatrix bitMatrix = barcodeWriter.encode(this.content, BarcodeFormat.QR_CODE, width, height, hints);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);

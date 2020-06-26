@@ -1,6 +1,5 @@
 package com.github.gdl.dto;
 
-import com.google.zxing.common.BitMatrix;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 

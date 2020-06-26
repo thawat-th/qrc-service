@@ -62,8 +62,7 @@ public class QrcBuilder {
         builder.append("\n");
 
         log.info(builder.toString());
-        Qrc qrc = new Qrc(builder.toString());
-        return qrc;
+        return new Qrc(builder.toString());
     }
 
     public QrcBuilder seller(String seller) {
