@@ -6,7 +6,9 @@ import com.github.gdl.dto.QrcDto;
 import com.google.zxing.WriterException;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +29,9 @@ public class QrcRestController {
         int height = qr.getMatrix().getHeight();
         BufferedImage image = qrc.writeToImage(width, height);
         log.info("image: [{}]", image.toString());
-        return new ResponseEntity<>(image, HttpStatus.OK);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
 
     @GetMapping("/write/{content}")
@@ -38,7 +42,9 @@ public class QrcRestController {
             @RequestParam(value = "height", defaultValue = "400") int height) throws WriterException {
         Qrc qrc = new Qrc(content);
         BufferedImage image = qrc.writeToImage(width, height);
-        return new ResponseEntity<>(image, HttpStatus.OK);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
 
 }
