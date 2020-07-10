@@ -1,6 +1,5 @@
 package com.github.gdl.rest;
 
-import com.github.gdl.builders.Qrc;
 import com.github.gdl.builders.QrcBuilder;
 import com.github.gdl.dto.QrcDto;
 import com.google.zxing.WriterException;
@@ -24,10 +23,8 @@ public class QrcRestController {
     @ApiOperation(value = "Renders a QR Code")
     public ResponseEntity<BufferedImage> write(
             @RequestBody QrcDto qr) throws WriterException {
-        Qrc qrc = new QrcBuilder(qr).build();
-        int width = qr.getMatrix().getWidth();
-        int height = qr.getMatrix().getHeight();
-        BufferedImage image = qrc.writeToImage(width, height);
+        QrcBuilder builder = QrcBuilder.builder().qrc(qr).build();
+        BufferedImage image = builder.writeToImage();
         log.info("image: [{}]", image.toString());
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
@@ -40,8 +37,8 @@ public class QrcRestController {
             @PathVariable String content,
             @RequestParam(value = "width", defaultValue = "400") int width,
             @RequestParam(value = "height", defaultValue = "400") int height) throws WriterException {
-        Qrc qrc = new Qrc(content);
-        BufferedImage image = qrc.writeToImage(width, height);
+        QrcBuilder builder = QrcBuilder.builder().content(content).build();
+        BufferedImage image = builder.writeToImage(width, height);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(image, headers, HttpStatus.OK);

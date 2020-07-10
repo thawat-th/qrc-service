@@ -1,20 +1,44 @@
 package com.github.gdl.builders;
 
 import com.github.gdl.dto.QrcDto;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
+
+import java.awt.image.BufferedImage;
+import java.util.Hashtable;
 
 @Slf4j
+@Builder
+@Data
 public class QrcBuilder {
-    private QrcDto qrc = new QrcDto();
+    private QrcDto qrc;
+    private String content;
+    private BufferedImage bufferedImage;
 
-    public QrcBuilder(QrcDto qrc) {
-        this.qrc = qrc;
+    public BufferedImage writeToImage() throws WriterException {
+        Assert.notNull(this.qrc, "QRC must not be null");
+        this.buildContent();
+        return this.writeToImage(this.qrc.getMatrix().getWidth(), this.qrc.getMatrix().getWidth());
     }
 
-    public QrcBuilder() {
+    public BufferedImage writeToImage(final int width, final int height) throws WriterException {
+        Assert.notNull(this.content, "QRC content must not be null");
+        QRCodeWriter barcodeWriter = new QRCodeWriter();
+        Hashtable<EncodeHintType, String> hints = new Hashtable<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        BitMatrix bitMatrix = barcodeWriter.encode(this.content, BarcodeFormat.QR_CODE, width, height, hints);
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);
     }
 
-    public Qrc build() {
+    private void buildContent() {
         StringBuilder builder = new StringBuilder();
         builder.append(qrc.getSeller());
         builder.append("\n");
@@ -60,119 +84,7 @@ public class QrcBuilder {
         builder.append("\n");
         builder.append(qrc.getWithholdingTaxConditions());
         builder.append("\n");
-
-        log.info(builder.toString());
-        return new Qrc(builder.toString());
-    }
-
-    public QrcBuilder seller(String seller) {
-        this.qrc.setSeller(seller);
-        return this;
-    }
-
-    public QrcBuilder referenceNo1(String referenceNo1) {
-        this.qrc.setReferenceNo1(referenceNo1);
-        return this;
-    }
-
-    public QrcBuilder referenceNo2(String referenceNo2) {
-        this.qrc.setReferenceNo2(referenceNo2);
-        return this;
-    }
-
-    public QrcBuilder totalAmount(String totalAmount) {
-        this.qrc.setTotalAmount(totalAmount);
-        return this;
-    }
-
-    public QrcBuilder transactionType(String transactionType) {
-        this.qrc.setTransactionType(transactionType);
-        return this;
-    }
-
-    public QrcBuilder dueDate(String dueDate) {
-        this.qrc.setDueDate(dueDate);
-        return this;
-    }
-
-    public QrcBuilder quantity(String quantity) {
-        this.qrc.setQuantity(quantity);
-        return this;
-    }
-
-    public QrcBuilder salesAmount(String salesAmount) {
-        this.qrc.setSalesAmount(salesAmount);
-        return this;
-    }
-
-    public QrcBuilder vatRate(String vatRate) {
-        this.qrc.setVatRate(vatRate);
-        return this;
-    }
-
-    public QrcBuilder vatAmount(String vatAmount) {
-        this.qrc.setVatAmount(vatAmount);
-        return this;
-    }
-
-    public QrcBuilder sellerVatBranchId(String sellerVatBranchId) {
-        this.qrc.setSellerVatBranchId(sellerVatBranchId);
-        return this;
-    }
-
-    public QrcBuilder buyerTaxId(String buyerTaxId) {
-        this.qrc.setBuyerTaxId(buyerTaxId);
-        return this;
-    }
-
-    public QrcBuilder buyerVatBranchId(String buyerVatBranchId) {
-        this.qrc.setBuyerVatBranchId(buyerVatBranchId);
-        return this;
-    }
-
-    public QrcBuilder buyerName(String buyerName) {
-        this.qrc.setBuyerName(buyerName);
-        return this;
-    }
-
-    public QrcBuilder referenceNo3(String referenceNo3) {
-        this.qrc.setReferenceNo3(referenceNo3);
-        return this;
-    }
-
-    public QrcBuilder proxyId(String proxyId) {
-        this.qrc.setProxyId(proxyId);
-        return this;
-    }
-
-    public QrcBuilder proxyType(String proxyType) {
-        this.qrc.setProxyType(proxyType);
-        return this;
-    }
-
-    public QrcBuilder netAmount(String netAmount) {
-        this.qrc.setNetAmount(netAmount);
-        return this;
-    }
-
-    public QrcBuilder typeOfIncome(String typeOfIncome) {
-        this.qrc.setTypeOfIncome(typeOfIncome);
-        return this;
-    }
-
-    public QrcBuilder withholdingTaxRate(String withholdingTaxRate) {
-        this.qrc.setWithholdingTaxRate(withholdingTaxRate);
-        return this;
-    }
-
-    public QrcBuilder withholdingTaxAmount(String withholdingTaxAmount) {
-        this.qrc.setWithholdingTaxAmount(withholdingTaxAmount);
-        return this;
-    }
-
-    public QrcBuilder withholdingTaxConditions(String withholdingTaxConditions) {
-        this.qrc.setWithholdingTaxConditions(withholdingTaxConditions);
-        return this;
+        this.content = builder.toString();
     }
 
 }
