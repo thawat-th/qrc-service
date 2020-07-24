@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Builder
@@ -32,7 +33,7 @@ public class QrcBuilder {
     public BufferedImage writeToImage(final int width, final int height) throws WriterException {
         Assert.notNull(this.content, "QRC content must not be null");
         QRCodeWriter barcodeWriter = new QRCodeWriter();
-        Hashtable<EncodeHintType, String> hints = new Hashtable<>();
+        Map hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BitMatrix bitMatrix = barcodeWriter.encode(this.content, BarcodeFormat.QR_CODE, width, height, hints);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
