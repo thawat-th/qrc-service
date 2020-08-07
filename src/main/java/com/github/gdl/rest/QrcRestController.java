@@ -3,7 +3,7 @@ package com.github.gdl.rest;
 import com.github.gdl.builders.QrcBuilder;
 import com.github.gdl.dto.QrcDto;
 import com.google.zxing.WriterException;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
 public class QrcRestController {
 
     @PostMapping("/write")
-    @ApiOperation(value = "Renders a QR Code")
+    @Operation(summary = "Renders a QR Code")
     public ResponseEntity<BufferedImage> write(
             @RequestBody QrcDto qr) throws WriterException {
         QrcBuilder builder = QrcBuilder.builder().qrc(qr).build();
@@ -32,7 +32,7 @@ public class QrcRestController {
     }
 
     @GetMapping("/write/{content}")
-    @ApiOperation(value = "Renders a QR Code with Content")
+    @Operation(summary = "Renders a QR Code with Content")
     public ResponseEntity<BufferedImage> write(
             @PathVariable String content,
             @RequestParam(value = "width", defaultValue = "400") int width,
